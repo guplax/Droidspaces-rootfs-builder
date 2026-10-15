@@ -1,16 +1,16 @@
 name: Build and Release Droidspaces RootFS
 
 on:
-  push:
-    branches: [main]
+  #push:
+  #  branches: [main]
   workflow_dispatch:
     inputs:
       update_json_only:
         description: 'Only regenerate rootfs.json from the latest release (skip build & release)'
         type: boolean
         default: false
-  schedule:
-    - cron: '0 0 * * 0'
+  #schedule:
+  #  - cron: '0 0 * * 0'
 
 concurrency:
   group: rootfs-release
@@ -39,6 +39,7 @@ jobs:
                 | map(capture("^(?<arch>[^/]+)/(?<name>.+)\\.Dockerfile$"))
                 | map(. + $archs[0][.arch])
                 | {include: .}')
+          MATRIX='{"include":[{"arch":"aarch64","name":"Alpine-Custom","platform":"linux/arm64","runner":"ubuntu-24.04-arm"},{"arch":"aarch64","name":"Ubuntu-24.04-Custom","platform":"linux/arm64","runner":"ubuntu-24.04-arm"}]}'
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
           echo "$MATRIX" | jq .
 
